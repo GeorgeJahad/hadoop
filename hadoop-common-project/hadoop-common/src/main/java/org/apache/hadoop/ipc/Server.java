@@ -148,6 +148,7 @@ public abstract class Server {
   private ExceptionsHandler exceptionsHandler = new ExceptionsHandler();
   private Tracer tracer;
   private AlignmentContext alignmentContext;
+  public static final String GBJ_SERVER = "gbj2Server";
   /**
    * Logical name of the server used in metrics and monitor.
    */
@@ -926,6 +927,11 @@ public abstract class Server {
     }
 
     @Override
+    public CallerContext getCallerContext() {
+      return this.callerContext;
+    }
+
+    @Override
     public int getPriorityLevel() {
       return this.priorityLevel;
     }
@@ -1233,6 +1239,7 @@ public abstract class Server {
       bind(acceptChannel.socket(), address, backlogLength, conf, portRangeConfig);
       //Could be an ephemeral port
       this.listenPort = acceptChannel.socket().getLocalPort();
+      LOG.info("gbj2Listener at {}:{}", bindAddress, this.listenPort);
       Thread.currentThread().setName("Listener at " +
           bindAddress + "/" + this.listenPort);
       // create a selector;
@@ -1270,7 +1277,7 @@ public abstract class Server {
       
       @Override
       public void run() {
-        LOG.info("Starting " + Thread.currentThread().getName());
+        LOG.info("gbj2Starting " + Thread.currentThread().getName());
         try {
           doRunLoop();
         } finally {
@@ -1349,7 +1356,7 @@ public abstract class Server {
 
     @Override
     public void run() {
-      LOG.info(Thread.currentThread().getName() + ": starting");
+      LOG.info(Thread.currentThread().getName() + ": gbj23starting");
       SERVER.set(Server.this);
       connectionManager.startIdleScan();
       while (running) {
@@ -1381,7 +1388,7 @@ public abstract class Server {
           closeCurrentConnection(key, e);
         }
       }
-      LOG.info("Stopping " + Thread.currentThread().getName());
+      LOG.info("gbj2Stopping " + Thread.currentThread().getName());
 
       synchronized (this) {
         try {
@@ -1509,7 +1516,7 @@ public abstract class Server {
 
     @Override
     public void run() {
-      LOG.info(Thread.currentThread().getName() + ": starting");
+      LOG.info(Thread.currentThread().getName() + ": gbj2starting");
       SERVER.set(Server.this);
       try {
         doRunLoop();
